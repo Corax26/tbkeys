@@ -94,6 +94,12 @@ var TBKeys = {
         })
     },
 
+    unbindKey: function(window, key) {
+        window.Mousetrap.bind(key, function(){
+            return false
+        })
+    },
+
     bindKeys: function(window) {
         window.Mousetrap.prototype.stopCallback = function(e, element, _combo) {
             let tagName = element.tagName.toLowerCase()
@@ -104,22 +110,24 @@ var TBKeys = {
             )
         }
         window.Mousetrap.reset()
-        this.bindKey(window, "j", "window.goDoCommand('cmd_nextMsg')")
-        this.bindKey(window, "k", "window.goDoCommand('cmd_previousMsg')")
-        this.bindKey(window, "o", "window.goDoCommand('cmd_openMessage')")
-        this.bindKey(window, "f", "window.goDoCommand('cmd_forward')")
-        this.bindKey(window, "#", "window.goDoCommand('cmd_delete')")
-        this.bindKey(window, "r", "window.goDoCommand('cmd_reply')")
-        this.bindKey(window, "a", "window.goDoCommand('cmd_replyall')")
-        this.bindKey(window, "x", "window.goDoCommand('cmd_archive')")
-        this.bindKey(window, "c", "window.MsgNewMessage()")
-        this.bindKey(window, "u", `
-            if (((window.document.activeElement.id == 'messagepane') || (window.document.activeElement == 'threadTree' )) && (window.document.getElementById('tabmail').tabContainer.selectedIndex!=0)){
-            window.CloseTabOrWindow()
-        }
 
-        window.goDoCommand('cmd_getMsgsForAuthAccounts')
-        window.goDoCommand('cmd_expandAllThreads')
+        this.bindKey(window, "r", "window.goDoCommand('cmd_markAsRead')")
+        this.bindKey(window, "R", "window.goDoCommand('cmd_markThreadAsRead')")
+        this.bindKey(window, "u", "window.goDoCommand('cmd_markAsUnread')")
+
+        this.bindKey(window, "ctrl+alt+c", `
+            Components.utils.import("resource://gre/modules/Preferences.jsm");
+            var pref = "browser.display.document_color_use";
+            if (Preferences.get(pref) == 2)
+                Preferences.set(pref, 0);
+            else
+                Preferences.set(pref, 2);
         `)
+
+        this.bindKey(window, "ctrl+shift+a", "window.openAddonsMgr()");
+        
+        this.unbindKey(window, "k");
+        this.unbindKey(window, "shift+c");
+        this.unbindKey(window, "ctrl+q");
     }
 }
